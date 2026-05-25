@@ -1,0 +1,4 @@
+filename,title,abstract_snippet,keywords
+sample1.pdf,Sample Paper on Deep Learning,"Deep learning has achieved remarkable results...",deep learning; neural network; classification
+sample2.pdf,Computer Vision for Pose Estimation,"This paper presents a novel approach to human pose...","pose estimation; keypoint detection; human body"
+sample3.pdf,Retrieval Augmented Generation,"RAG combines retrieval systems with generative models...","RAG; language model; retrieval; generation"

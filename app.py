@@ -620,6 +620,54 @@ def build_compare_links(orig: str, dest: str, date: str, adults: int = 1) -> str
 </div>
 """
 
+def fmt_time(raw: str) -> str:
+    """將 fast-flights 回傳的英文時間格式轉換為繁體中文格式
+    例如: '1:35 AM on Sat, May 30' → '週六 5/30 01:35'
+    """
+    import re
+    if not raw or not isinstance(raw, str):
+        return raw
+    raw = raw.strip()
+
+    # 星期對照
+    week_zh = {
+        'Mon': '週一', 'Tue': '週二', 'Wed': '週三',
+        'Thu': '週四', 'Fri': '週五', 'Sat': '週六', 'Sun': '週日'
+    }
+    # 月份對照
+    month_zh = {
+        'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
+        'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12
+    }
+
+    # 匹配 "1:35 AM on Sat, May 30" 或 "1:35 AM"
+    m = re.match(
+        r'(\d{1,2}):(\d{2})\s*(AM|PM)(?:\s+on\s+(\w+),?\s+(\w+)\s+(\d{1,2}))?',
+        raw, re.IGNORECASE
+    )
+    if not m:
+        return raw
+
+    hour, minute, ampm = int(m.group(1)), int(m.group(2)), m.group(3).upper()
+    weekday_en = m.group(4)
+    month_en   = m.group(5)
+    day        = m.group(6)
+
+    # 12h → 24h
+    if ampm == 'AM':
+        hour = 0 if hour == 12 else hour
+    else:
+        hour = 12 if hour == 12 else hour + 12
+
+    time_str = f"{hour:02d}:{minute:02d}"
+
+    if weekday_en and month_en and day:
+        wk  = week_zh.get(weekday_en[:3], weekday_en)
+        mon = month_zh.get(month_en[:3], month_en)
+        return f"{wk} {mon}/{day} {time_str}"
+    return time_str
+
+
 def render_segment_card(airline, flight_no, segment_str):
     """將以 | 分隔的航段字串轉成精美的 HTML 登機證卡片"""
     parts = str(segment_str).split('|')
@@ -823,7 +871,7 @@ html_content = f"""
     <span style="font-size:1.35rem; font-weight:900; color:#f8fafc;">🛬 {dest_display}</span>
 </div>
 📅 航班日期：<span style="font-weight:700; color:white;">{f_date_top}</span><br>
-🕒 <span style="font-weight:700; color:white;">{top_flight['departure_time']}</span> 起飛 ➔ <span style="font-weight:700; color:white;">{top_flight['arrival_time']}</span> 抵達 
+🕒 <span style="font-weight:700; color:white;">{fmt_time(top_flight['departure_time'])}</span> 起飛 ➔ <span style="font-weight:700; color:white;">{fmt_time(top_flight['arrival_time'])}</span> 抵達 
 <span style="background:rgba(255,255,255,0.08); padding:2px 10px; border-radius:6px; font-size:0.9rem; color:#94a3b8;">{top_h}h {top_m}m</span><br>
 🔄 轉機資訊：<span style="background:rgba(255,255,255,0.12); padding:3px 12px; border-radius:20px; font-size:0.9rem; font-weight:700; color:#fbbf24; border:1px solid rgba(251,191,36,0.3);">{stops_text}</span>
 </div>
@@ -915,7 +963,7 @@ with tab1:
                 price_html = f"""
 <div style="font-size: 1.15rem; line-height: 1.9; color: #334155; margin-bottom: 20px;">
     <span style="font-weight:800; color:#0f172a;">🛫 {origin_display} ➔ 🛬 {dest_display}</span><br>
-    🕒 <span style="font-weight:700;">{row['departure_time']}</span> 起飛 ➔ <span style="font-weight:700;">{row['arrival_time']}</span> 抵達 ({cand_h}小時 {cand_m}分鐘)<br>
+    🕒 <span style="font-weight:700;">{fmt_time(row['departure_time'])}</span> 起飛 ➔ <span style="font-weight:700;">{fmt_time(row['arrival_time'])}</span> 抵達 ({cand_h}小時 {cand_m}分鐘)<br>
     📅 航班日期：<span style="font-weight:700;">{f_date}</span><br>
     🔄 轉機資訊：<span style="background:#e2e8f0; padding:2px 8px; border-radius:4px; font-size:1rem;">{cand_stops}</span><br>
 </div>

@@ -860,13 +860,27 @@ with _btn_col:
 if show_all:
     score_threshold = 0
 
+max_score = df_result["recommendation_score"].max()
+force_show_all = False
+original_threshold = score_threshold
+if max_score < score_threshold:
+    force_show_all = True
+    score_threshold = 0
+
 # 根據閾值篩選（第一名不受閾值限制）
 df_display_result = df_result[
     (df_result["recommendation_score"] >= score_threshold) | (df_result["排名"] == 1)
 ].copy()
 hidden_count = len(df_result) - len(df_display_result)
 
-if hidden_count > 0:
+if force_show_all:
+    st.markdown(
+        f"<div style='background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); "
+        f"border-radius:10px; padding:10px 18px; margin-bottom:18px; font-size:0.95rem; color:#991b1b;'>"
+        f"⚠️ <b>注意：</b>本次搜尋所有航班的 AI 評分皆低於您設定的閾值 ({original_threshold} 分)。已為您自動展開所有航班。</div>",
+        unsafe_allow_html=True
+    )
+elif hidden_count > 0:
     st.markdown(
         f"<div style='background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.3); "
         f"border-radius:10px; padding:10px 18px; margin-bottom:18px; font-size:0.95rem; color:#92400e;'>"

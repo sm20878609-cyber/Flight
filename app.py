@@ -704,119 +704,119 @@ if not st.session_state.get('has_searched', False):
 
 if st.session_state.get('needs_compute', True):
     with st.spinner("🤖 AI 正在為您搜羅全球航班並進行智能分析，請稍候..."):
-    df_raw = None
-    fallback_triggered = False
+        df_raw = None
+        fallback_triggered = False
     
-    # 1. 資料載入邏輯與備援機制
-    if data_source == "使用 Google Flights 爬蟲查詢":
-        df_raw, msg = fetch_scraped_flights(
-            origin=origin_code,
-            destination=destination_code,
-            dates=date_list,
-            flight_type=flight_type,
-            adults=adults,
-            currency=currency
-        )
+        # 1. 資料載入邏輯與備援機制
+        if data_source == "使用 Google Flights 爬蟲查詢":
+            df_raw, msg = fetch_scraped_flights(
+                origin=origin_code,
+                destination=destination_code,
+                dates=date_list,
+                flight_type=flight_type,
+                adults=adults,
+                currency=currency
+            )
         
-        if df_raw is not None:
-            st.success(f"✅ 成功為您掃描並找到 {len(df_raw)} 個機票組合！")
-        else:
-            # 判斷是否為明確的「查無航班」
-            if "找不到" in msg:
-                st.markdown(f"""
-                <div class="no-flight-alert">
-                    <h3>📭 查無航班資料</h3>
-                    <p>非常抱歉，在 <b>{display_date_str}</b> 區間內，我們找不到從 <b>{origin_display}</b> 飛往 <b>{dest_display}</b> 的符合航班。</p>
-                    <p style='font-size: 0.95rem; margin-top: 5px; color: #d97706;'>👉 建議您：嘗試更改出發日期、選擇不同的目的地，或是放寬最大轉機次數限制。</p>
-                </div>
-                """, unsafe_allow_html=True)
-                st.stop()
+            if df_raw is not None:
+                st.success(f"✅ 成功為您掃描並找到 {len(df_raw)} 個機票組合！")
             else:
-                fallback_triggered = True
-                st.warning(f"⚠️ 即時連線發生問題 ({msg})，系統為您切換至離線快取資料。")
+                # 判斷是否為明確的「查無航班」
+                if "找不到" in msg:
+                    st.markdown(f"""
+                    <div class="no-flight-alert">
+                        <h3>📭 查無航班資料</h3>
+                        <p>非常抱歉，在 <b>{display_date_str}</b> 區間內，我們找不到從 <b>{origin_display}</b> 飛往 <b>{dest_display}</b> 的符合航班。</p>
+                        <p style='font-size: 0.95rem; margin-top: 5px; color: #d97706;'>👉 建議您：嘗試更改出發日期、選擇不同的目的地，或是放寬最大轉機次數限制。</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.stop()
+                else:
+                    fallback_triggered = True
+                    st.warning(f"⚠️ 即時連線發生問題 ({msg})，系統為您切換至離線快取資料。")
                 
-                # Fallback
-                df_raw, cache_msg = load_cached_scraped_data()
-                if df_raw is None:
-                    df_raw, sample_msg = load_sample_data()
+                    # Fallback
+                    df_raw, cache_msg = load_cached_scraped_data()
                     if df_raw is None:
-                        st.error("目前沒有任何可用的航班備援資料。")
-                        st.stop()
+                        df_raw, sample_msg = load_sample_data()
+                        if df_raw is None:
+                            st.error("目前沒有任何可用的航班備援資料。")
+                            st.stop()
 
-    elif data_source == "使用已快取爬蟲資料":
-        df_raw, msg = load_cached_scraped_data()
-        if df_raw is None:
-            st.error(msg)
-            df_raw, _ = load_sample_data()
-            st.info("已為您切換至內建範例航班。")
-        else:
-            st.success("✅ " + msg)
+        elif data_source == "使用已快取爬蟲資料":
+            df_raw, msg = load_cached_scraped_data()
+            if df_raw is None:
+                st.error(msg)
+                df_raw, _ = load_sample_data()
+                st.info("已為您切換至內建範例航班。")
+            else:
+                st.success("✅ " + msg)
             
-    elif data_source == "上傳 CSV":
-        if uploaded_file:
-            df_raw, msg = load_uploaded_data(uploaded_file)
+        elif data_source == "上傳 CSV":
+            if uploaded_file:
+                df_raw, msg = load_uploaded_data(uploaded_file)
+                if df_raw is None:
+                    st.error(msg)
+                    st.stop()
+                st.success("✅ " + msg)
+            else:
+                st.error("❌ 請先上傳檔案。")
+                st.stop()
+            
+        else:
+            df_raw, msg = load_sample_data()
             if df_raw is None:
                 st.error(msg)
                 st.stop()
             st.success("✅ " + msg)
-        else:
-            st.error("❌ 請先上傳檔案。")
-            st.stop()
-            
-    else:
-        df_raw, msg = load_sample_data()
-        if df_raw is None:
-            st.error(msg)
-            st.stop()
-        st.success("✅ " + msg)
 
-    # 確保備援資料有 query_date
-    if "query_date" not in df_raw.columns:
-        df_raw["query_date"] = "未知日期"
+        # 確保備援資料有 query_date
+        if "query_date" not in df_raw.columns:
+            df_raw["query_date"] = "未知日期"
 
-    # 2. 資料預處理
-    df_clean = full_preprocessing(df_raw)
+        # 2. 資料預處理
+        df_clean = full_preprocessing(df_raw)
     
-    # 3. 過濾條件
-    df_filtered, filter_msg = filter_flights(df_clean, origin_code, destination_code, max_stops)
-    if df_filtered.empty:
-        st.markdown(f"""
-        <div class="no-flight-alert">
-            <h3>📭 條件過於嚴苛</h3>
-            <p>找不到符合您「<b>目前過濾條件</b>」的航班。</p>
-            <p style='font-size: 0.95rem; margin-top: 5px; color: #d97706;'>👉 {filter_msg}</p>
-        </div>
-        """, unsafe_allow_html=True)
-        st.stop()
+        # 3. 過濾條件
+        df_filtered, filter_msg = filter_flights(df_clean, origin_code, destination_code, max_stops)
+        if df_filtered.empty:
+            st.markdown(f"""
+            <div class="no-flight-alert">
+                <h3>📭 條件過於嚴苛</h3>
+                <p>找不到符合您「<b>目前過濾條件</b>」的航班。</p>
+                <p style='font-size: 0.95rem; margin-top: 5px; color: #d97706;'>👉 {filter_msg}</p>
+            </div>
+            """, unsafe_allow_html=True)
+            st.stop()
     
-    # 4. AI KNN 推薦
-    df_ml = prepare_features(df_filtered)
-    df_recommended, scaler, X_scaled = knn_recommend(df_ml, preference)
+        # 4. AI KNN 推薦
+        df_ml = prepare_features(df_filtered)
+        df_recommended, scaler, X_scaled = knn_recommend(df_ml, preference)
     
-    # Debug 資訊顯示
-    if show_debug:
-        st.markdown("### 🛠️ 開發者除錯資訊")
-        st.write("解析後的 DataFrame (前 10 筆)：")
-        debug_cols = ["airline", "flight_no", "price", "total_price", "adults", "departure_time", "arrival_time", "data_source"]
-        st.dataframe(df_recommended[[c for c in debug_cols if c in df_recommended.columns]].head(10))
+        # Debug 資訊顯示
+        if show_debug:
+            st.markdown("### 🛠️ 開發者除錯資訊")
+            st.write("解析後的 DataFrame (前 10 筆)：")
+            debug_cols = ["airline", "flight_no", "price", "total_price", "adults", "departure_time", "arrival_time", "data_source"]
+            st.dataframe(df_recommended[[c for c in debug_cols if c in df_recommended.columns]].head(10))
         
-        if "_raw_fast_flights" in df_recommended.columns:
-            st.write("fast-flights 原始回傳結果 (第一筆)：")
-            st.code(df_recommended.iloc[0]["_raw_fast_flights"], language="text")
+            if "_raw_fast_flights" in df_recommended.columns:
+                st.write("fast-flights 原始回傳結果 (第一筆)：")
+                st.code(df_recommended.iloc[0]["_raw_fast_flights"], language="text")
 
-    # 5. AI KMeans 分群
-    n_clusters = min(4, max(2, len(df_recommended) - 1))
-    if len(df_recommended) > 2:
-        df_clustered, cluster_msg = kmeans_cluster(df_recommended, n_clusters=n_clusters)
-        df_result = df_clustered.sort_values("recommendation_score", ascending=False).reset_index(drop=True)
-        pca_df = get_pca_data(df_result, scaler)
-    else:
-        df_result = df_recommended.sort_values("recommendation_score", ascending=False).reset_index(drop=True)
-        df_result["cluster_label"] = "資料過少未分類"
-        pca_df = None
-        cluster_msg = "航班資料數量不足，已略過分群分析。"
+        # 5. AI KMeans 分群
+        n_clusters = min(4, max(2, len(df_recommended) - 1))
+        if len(df_recommended) > 2:
+            df_clustered, cluster_msg = kmeans_cluster(df_recommended, n_clusters=n_clusters)
+            df_result = df_clustered.sort_values("recommendation_score", ascending=False).reset_index(drop=True)
+            pca_df = get_pca_data(df_result, scaler)
+        else:
+            df_result = df_recommended.sort_values("recommendation_score", ascending=False).reset_index(drop=True)
+            df_result["cluster_label"] = "資料過少未分類"
+            pca_df = None
+            cluster_msg = "航班資料數量不足，已略過分群分析。"
 
-    df_result["排名"] = df_result.index + 1
+        df_result["排名"] = df_result.index + 1
     
     st.session_state['df_result'] = df_result
     st.session_state['pca_df'] = pca_df

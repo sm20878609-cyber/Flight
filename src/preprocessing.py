@@ -42,15 +42,18 @@ def filter_flights(df: pd.DataFrame, origin: str, destination: str, max_stops: i
     if df.empty:
         return df, "無可用航班"
         
-    df_filtered = df[
+    df_route = df[
         (df["origin"].str.upper() == origin.upper()) &
         (df["destination"].str.upper() == destination.upper())
     ].copy()
     
-    df_filtered = df_filtered[df_filtered["stops"] <= max_stops]
+    if df_route.empty:
+        return df_route, "找不到符合您出發地與目的地的航班。"
+        
+    df_filtered = df_route[df_route["stops"] <= max_stops].copy()
     
     if df_filtered.empty:
-        return df_filtered, "找不到符合您條件的航班（可能已過濾掉轉機次數過多的航班）。"
+        return df_route, "too_strict_stops"
         
     return df_filtered, "過濾成功"
 

@@ -788,6 +788,9 @@ if st.session_state.get('needs_compute', True):
             </div>
             """, unsafe_allow_html=True)
             st.stop()
+            
+        if filter_msg == "too_strict_stops":
+            st.warning(f"⚠️ 找不到符合「最大 {max_stops} 次轉機」的航班。已為您自動放寬轉機次數限制，展示以下可用航班！")
     
         # 4. AI KNN 推薦
         df_ml = prepare_features(df_filtered)

@@ -992,12 +992,12 @@ df_result = df_result_filtered
 # ═══════════════════════════════════════════════════════════════════════════
 st.markdown("""
 <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;
-            background:rgba(255,255,255,0.75); backdrop-filter:blur(12px);
-            border:1px solid rgba(226,232,240,0.9); border-radius:16px;
+            background:rgba(15,23,42,0.85); backdrop-filter:blur(12px);
+            border:1px solid rgba(255,255,255,0.12); border-radius:16px;
             padding:16px 24px; margin-bottom:28px;
-            box-shadow:0 4px 15px rgba(30,58,138,0.05);">
-    <span style="font-size:1.3rem;">&#x1F3AF;</span>
-    <span style="font-weight:800; color:#1e293b; font-size:1rem; white-space:nowrap;">
+            box-shadow:0 4px 15px rgba(0,0,0,0.3);">
+    <span style="font-size:1.3rem;">🎯</span>
+    <span style="font-weight:800; color:#e2e8f0; font-size:1rem; white-space:nowrap;">
         AI 分數閾值篩選
     </span>
 </div>
@@ -1034,14 +1034,14 @@ hidden_count = len(df_result) - len(df_display_result)
 if force_show_all:
     st.markdown(
         f"<div style='background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); "
-        f"border-radius:10px; padding:10px 18px; margin-bottom:18px; font-size:0.95rem; color:#991b1b;'>"
+        f"border-radius:10px; padding:10px 18px; margin-bottom:18px; font-size:0.95rem; color:#fca5a5;'>"
         f"⚠️ <b>注意：</b>本次搜尋所有航班的 AI 評分皆低於您設定的閾值 ({original_threshold} 分)。已為您自動展開所有航班。</div>",
         unsafe_allow_html=True
     )
 elif hidden_count > 0:
     st.markdown(
         f"<div style='background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.3); "
-        f"border-radius:10px; padding:10px 18px; margin-bottom:18px; font-size:0.95rem; color:#92400e;'>"
+        f"border-radius:10px; padding:10px 18px; margin-bottom:18px; font-size:0.95rem; color:#fbbf24;'>"
         f"🔍 目前展示 <b>AI 分數 ≥ {score_threshold} 分</b> 的航班共 <b>{len(df_display_result)} 班</b>，"
         f"另有 <b>{hidden_count} 班</b>因分數不足閾值而隱藏。可調低閾值或點擊「展開全部航班」查看。</div>",
         unsafe_allow_html=True
@@ -1073,7 +1073,7 @@ with c4:
 ds = top_flight.get('data_source', '')
 ds_warning = ""
 if "快取" in ds or "範例" in ds or "舊版" in ds:
-    ds_warning = f"<div style='margin-top: 15px; background: #fffbeb; color: #b45309; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem;'>⚠️ <b>注意：</b>目前顯示的是 {ds}，可能不是即時查詢結果。</div>"
+    ds_warning = f"<div style='margin-top: 15px; background: rgba(180,83,9,0.15); border: 1px solid rgba(245,158,11,0.3); color: #fcd34d; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem;'>⚠️ <b>注意：</b>目前顯示的是 {ds}，可能不是即時查詢結果。</div>"
 else:
     ds_warning = f"<div style='margin-top: 15px; color: #10b981; font-size: 0.95rem; font-weight:600;'>🟢 資料來源：{ds}</div>"
 
@@ -1155,8 +1155,8 @@ ai_info_html = f"""
         <h4 class="ai-info-heading">AI 推薦演算法與價格資料來源說明</h4>
     </div>
     <div class="ai-info-section algo">
-        <b style="color:#1e3a8a; font-size:1.05rem;">📌 計算機票排名的依據為何？</b><br>
-        <span style="color:#475569; line-height:1.8;">本系統採用 <b>K-Nearest Neighbors (KNN) 機器學習演算法</b>。系統將所有航班的「票價、飛行時間、轉機次數」特徵經 MinMaxScaler 標準化後，映射至多維度特徵空間。接著根據您設定的「AI 推薦優先順序」（目前策略：<b style="color:#2563eb;">{preference}</b>）賦予不同特徵權重，計算各航班與「完美理想航班（最低價、最短時、零轉機）」的歐氏距離。<b>距離越短 = AI 評分越高</b>。</span>
+        <b style="color:#60a5fa; font-size:1.05rem;">📌 計算機票排名的依據為何？</b><br>
+        <span style="color:#94a3b8; line-height:1.8;">本系統採用 <b>K-Nearest Neighbors (KNN) 機器學習演算法</b>。系統將所有航班的「票價、飛行時間、轉機次數」特徵經 MinMaxScaler 標準化後，映射至多維度特徵空間。接著根據您設定的「AI 推薦優先順序」（目前策略：<b style="color:#38bdf8;">{preference}</b>）賦予不同特徵權重，計算各航班與「完美理想航班（最低價、最短時、零轉機）」的歐氏距離。<b>距離越短 = AI 評分越高</b>。</span>
     </div>
     <div class="ai-info-section price">
         <b style="color:#065f46; font-size:1.05rem;">💰 價格是哪裡的價格資訊？如何進行比價？</b><br>
@@ -1217,16 +1217,16 @@ with tab1:
                 gf_url_cand = f"https://www.google.com/travel/flights?q=Flights%20to%20{destination_code}%20from%20{origin_code}%20on%20{f_date}"
                 
                 price_html = f"""
-<div style="font-size: 1.15rem; line-height: 1.9; color: #334155; margin-bottom: 20px;">
-    <span style="font-weight:800; color:#0f172a;">🛫 {origin_display} ➔ 🛬 {dest_display}</span><br>
-    🕒 <span style="font-weight:700;">{fmt_time(row['departure_time'])}</span> 起飛 ➔ <span style="font-weight:700;">{fmt_time(row['arrival_time'])}</span> 抵達 ({cand_h}小時 {cand_m}分鐘)<br>
-    📅 航班日期：<span style="font-weight:700;">{f_date}</span><br>
-    🔄 轉機資訊：<span style="background:#e2e8f0; padding:2px 8px; border-radius:4px; font-size:1rem;">{cand_stops}</span>{'<a href="' + cand_gf_url + '" target="_blank" style="margin-left:6px; font-size:0.82rem; color:#2563eb;">查看轉機詳情 ↗</a>' if row['stops'] > 0 else ''}<br>
-    ✈️ 航空別：<span style="background:#e2e8f0; padding:2px 8px; border-radius:4px; font-size:0.9rem; color:{'#0f766e' if row.get('airline_type','') == '全服務航空 (FSC)' else '#b45309' if row.get('airline_type','') == '廣航 (LCC)' else '#64748b'};">{row.get('airline_type', '未知')}</span><br>
+<div style="font-size: 1.15rem; line-height: 1.9; color: #cbd5e1; margin-bottom: 20px;">
+    <span style="font-weight:800; color:#f8fafc;">🛫 {origin_display} ➔ 🛬 {dest_display}</span><br>
+    🕒 <span style="font-weight:700; color:#e2e8f0;">{fmt_time(row['departure_time'])}</span> 起飛 ➔ <span style="font-weight:700; color:#e2e8f0;">{fmt_time(row['arrival_time'])}</span> 抵達 ({cand_h}小時 {cand_m}分鐘)<br>
+    📅 航班日期：<span style="font-weight:700; color:#e2e8f0;">{f_date}</span><br>
+    🔄 轉機資訊：<span style="background:rgba(255,255,255,0.12); padding:2px 8px; border-radius:4px; font-size:1rem; color:#f8fafc;">{cand_stops}</span>{'<a href="' + cand_gf_url + '" target="_blank" style="margin-left:6px; font-size:0.82rem; color:#93c5fd;">查看轉機詳情 ↗</a>' if row['stops'] > 0 else ''}<br>
+    ✈️ 航空別：<span style="background:rgba(255,255,255,0.12); padding:2px 8px; border-radius:4px; font-size:0.9rem; font-weight:600; color:{'#2dd4bf' if row.get('airline_type','') == '全服務航空 (FSC)' else '#fbbf24' if row.get('airline_type','') == '廉航 (LCC)' else '#94a3b8'};">{row.get('airline_type', '未知')}</span><br>
 </div>
-<div style="margin-top: 15px; padding: 15px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0;">
-<div style="font-size: 0.95rem; color: #475569; margin-bottom: 5px;">💰 <b>單人票價</b>：{currency} {row['price']:,.0f} &nbsp;|&nbsp; 👥 <b>人數</b>：{int(adults_c)}</div>
-<div style="font-size: 1.1rem; color: #0f172a;">💳 <b>總計票價</b>：<b style="color: #ea580c; font-size: 1.3rem;">{currency} {total_p:,.0f}</b></div>
+<div style="margin-top: 15px; padding: 15px; border-radius: 12px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.08);">
+<div style="font-size: 0.95rem; color: #94a3b8; margin-bottom: 5px;">💰 <b>單人票價</b>：{currency} {row['price']:,.0f} &nbsp;|&nbsp; 👥 <b>人數</b>：{int(adults_c)}</div>
+<div style="font-size: 1.1rem; color: #e2e8f0;">💳 <b>總計票價</b>：<b style="color: #f97316; font-size: 1.3rem;">{currency} {total_p:,.0f}</b></div>
 <a href="{gf_url_cand}" target="_blank" style="text-decoration: none; display: inline-block; margin-top: 12px; width: 100%;">
 <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 8px 15px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; text-align: center; transition: all 0.2s;">
 ✈️ 前往 Google Flights 查看與訂票

@@ -230,6 +230,26 @@ def get_airport_code(display_name: str) -> str:
         return match.group(1)
     return stripped
 
+def get_categorized_airports() -> list:
+    """回傳分類後的機場選單列表，包含分類標題與縮排的機場名稱。"""
+    options = []
+    current_category = ""
+    for code, display in AIRPORT_NAMES_ZH.items():
+        if display.startswith("【"):
+            end_idx = display.find("】")
+            if end_idx != -1:
+                category = display[1:end_idx]
+                airport_name = display[end_idx+1:]
+                
+                if category != current_category:
+                    options.append(f"【 🌍 {category} 】")
+                    current_category = category
+                # 使用全形空白縮排
+                options.append(f"　{airport_name.strip()}")
+                continue
+        options.append(display)
+    return options
+
 def validate_columns(df: pd.DataFrame) -> Tuple[bool, str]:
     missing = [col for col in REQUIRED_COLUMNS if col not in df.columns]
     if missing:

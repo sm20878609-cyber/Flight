@@ -1,4 +1,4 @@
-﻿"""
+"""
 app.py
 AI 智慧航班機票搜尋與推薦系統 - Streamlit 主程式
 整合 fast-flights 即時航班查詢與 AI 推薦排序 (高質感旅遊風版)
@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from src.data_loader import (
     load_sample_data, load_uploaded_data, load_cached_scraped_data,
-    get_airport_display_name, get_airport_code, AIRPORT_NAMES_ZH
+    get_airport_display_name, get_airport_code, AIRPORT_NAMES_ZH, get_categorized_airports
 )
 from src.preprocessing import full_preprocessing, filter_flights, prepare_features
 from src.recommender import (
@@ -49,17 +49,17 @@ st.markdown("""
 /* ─── 全局基礎 ─── */
 html, body, [class*="css"], .stApp {
     font-family: 'Outfit', 'Noto Sans TC', sans-serif !important;
-    background: #0a0f1e;
+    background: #f8fafc !important;
     min-height: 100vh;
 }
 
 /* ─── 動態背景 ─── */
 .stApp {
     background:
-        radial-gradient(ellipse at 20% 50%, rgba(59,130,246,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse at 60% 90%, rgba(16,185,129,0.06) 0%, transparent 60%),
-        linear-gradient(160deg, #0d1117 0%, #0f172a 50%, #0d1117 100%) !important;
+        radial-gradient(ellipse at 20% 50%, rgba(59,130,246,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse at 60% 90%, rgba(16,185,129,0.03) 0%, transparent 60%),
+        linear-gradient(160deg, #ffffff 0%, #f1f5f9 50%, #ffffff 100%) !important;
     background-attachment: fixed !important;
 }
 
@@ -709,15 +709,17 @@ with st.container(border=True):
     with c1:
         flight_type = st.selectbox("航班類型", options=["one-way", "round-trip"], format_func=lambda x: "單程" if x == "one-way" else "來回")
     with c2:
-        all_airports = [get_airport_display_name(c) for c in AIRPORT_NAMES_ZH.keys()]
-        idx_tpe = all_airports.index(get_airport_display_name("TPE")) if get_airport_display_name("TPE") in all_airports else 0
+        all_airports = get_categorized_airports()
+        idx_tpe = next((i for i, opt in enumerate(all_airports) if "TPE" in opt), 0)
         origin_display = st.selectbox("🛫 出發地", options=all_airports, index=idx_tpe)
         origin_code = get_airport_code(origin_display)
     with c3:
-        idx_nrt = all_airports.index(get_airport_display_name("NRT")) if get_airport_display_name("NRT") in all_airports else 1
+        idx_nrt = next((i for i, opt in enumerate(all_airports) if "NRT" in opt), 1)
         dest_display = st.selectbox("🛬 目的地", options=all_airports, index=idx_nrt)
         destination_code = get_airport_code(dest_display)
-
+        
+    if origin_display.startswith("【 🌍") or dest_display.startswith("【 🌍"):
+        st.warning("⚠️ 請選擇具體的機場，而非分類標題。")
     # ── 第二排：日期與細節設定 ──
     st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
     r2_c1, r2_c2, r2_c3, r2_c4 = st.columns(4)
@@ -889,8 +891,11 @@ def render_segment_card(airline, flight_no, segment_str):
 # ═══════════════════════════════════════════════════════════════════════════
 # 如果按下按鈕，標記已搜尋，並要求重新計算
 if analyze_btn:
-    st.session_state['has_searched'] = True
-    st.session_state['needs_compute'] = True
+    if origin_display.startswith("【 🌍") or dest_display.startswith("【 🌍"):
+        st.error("請在上方選單中選擇具體的機場，而非地區分類標題！")
+    else:
+        st.session_state['has_searched'] = True
+        st.session_state['needs_compute'] = True
 
 if not st.session_state.get('has_searched', False):
     st.markdown("<div style='text-align: center; color: #64748b; margin-top: 50px;'><h4>💡 請設定上方的旅程條件後，點擊「✈️ 啟程搜尋航班」開啟您的旅程。</h4></div>", unsafe_allow_html=True)

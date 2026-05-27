@@ -1174,12 +1174,10 @@ compare_links = build_compare_links(origin_code, destination_code, f_date_top, a
 top_addon_cost = top_flight.get('addon_unit_cost', 0)
 top_addon_html = ""
 if top_addon_cost > 0:
-    top_addon_html = f"""
-    <div>
-        <div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">加購服務 (單人)</div>
-        <div style="color:#fbbf24; font-size:1.25rem; font-weight:700;">+{currency} {top_addon_cost:,.0f}</div>
-    </div>
-    """
+    top_addon_html = f"""<div>
+<div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">加購服務 (單人)</div>
+<div style="color:#fbbf24; font-size:1.25rem; font-weight:700;">+{currency} {top_addon_cost:,.0f}</div>
+</div>"""
 
 html_content = f"""
 <div class="top-flight-card">
@@ -1201,23 +1199,23 @@ html_content = f"""
     <span class="price-source-badge">&#x1F4E1; 價格來源：Google Flights 即時爬蟲 (含稅總價)</span>
 </div>
 <div style="display:flex; align-items:flex-end; gap:20px; flex-wrap:wrap;">
-    <div>
-        <div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">基本票價 (單人)</div>
-        <div style="color:#1e293b; font-size:1.25rem; font-weight:700;">{currency} {top_flight.get('base_price', top_flight['price']):,.0f}</div>
-    </div>
-    {top_addon_html}
-    <div>
-        <div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">人數</div>
-        <div style="color:#1e293b; font-size:1.25rem; font-weight:700;">{int(adults_val)} 位成人</div>
-    </div>
-    <div>
-        <div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">總計票價 (含加購)</div>
-        <div style="font-size:2.2rem; font-weight:900; font-family:'Outfit',sans-serif; color:#f59e0b; line-height:1;">{currency} {total_price_val:,.0f}</div>
-    </div>
-    <div>
-        <div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">AI 評分</div>
-        <div style="font-size:2.2rem; font-weight:900; font-family:'Outfit',sans-serif; color:#38bdf8; line-height:1;">{top_flight['recommendation_score']:.1f}</div>
-    </div>
+<div>
+<div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">基本票價 (單人)</div>
+<div style="color:#1e293b; font-size:1.25rem; font-weight:700;">{currency} {top_flight.get('base_price', top_flight['price']):,.0f}</div>
+</div>
+{top_addon_html}
+<div>
+<div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">人數</div>
+<div style="color:#1e293b; font-size:1.25rem; font-weight:700;">{int(adults_val)} 位成人</div>
+</div>
+<div>
+<div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">總計票價 (含加購)</div>
+<div style="font-size:2.2rem; font-weight:900; font-family:'Outfit',sans-serif; color:#f59e0b; line-height:1;">{currency} {total_price_val:,.0f}</div>
+</div>
+<div>
+<div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">AI 評分</div>
+<div style="font-size:2.2rem; font-weight:900; font-family:'Outfit',sans-serif; color:#38bdf8; line-height:1;">{top_flight['recommendation_score']:.1f}</div>
+</div>
 </div>
 <div style="margin-top: 16px; background: rgba(59,130,246,0.08); padding: 12px 18px; border-radius: 12px; border-left: 3px solid #38bdf8;">
 ✨ <b style="color:#93c5fd;">AI 推薦原因</b>：<span style="color:#1e293b;">{generate_recommendation_reason(top_flight, preference, 1)}</span>

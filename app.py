@@ -543,11 +543,15 @@ with st.container(border=True):
     st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
     r2_c1, r2_c2, r2_c3, r2_c4 = st.columns(4)
     
-    target_dates_input = (datetime.date.today() + datetime.timedelta(days=14), datetime.date.today() + datetime.timedelta(days=20))
+    target_dates_input = (datetime.date.today(), datetime.date.today() + datetime.timedelta(days=7))
     uploaded_file = None
 
     with r2_c1:
-        target_dates = st.date_input("📅 查詢日期區間 (建議 7 天內)", value=target_dates_input)
+        target_dates = st.date_input(
+            "📅 查詢日期區間 (建議 7 天內)",
+            value=target_dates_input,
+            min_value=datetime.date.today(),
+        )
         
         # 解析日期成 list
         if isinstance(target_dates, tuple) and len(target_dates) == 2:
@@ -582,9 +586,6 @@ with st.container(border=True):
     with r3_c1:
         preference = st.selectbox("🎯 AI 推薦優先順序", [PREF_PRICE, PREF_TIME, PREF_STOPS, PREF_BALANCE], index=3, 
                                   help="系統將根據您的偏好，為每一班機票進行智能打分與排序")
-        
-        # 開發者除錯開關
-        show_debug = st.checkbox("🛠️ 顯示爬蟲原始資料除錯資訊")
         
     with r3_c2:
         st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True) # Spacer
@@ -796,17 +797,6 @@ if st.session_state.get('needs_compute', True):
         df_ml = prepare_features(df_filtered)
         df_recommended, scaler, X_scaled = knn_recommend(df_ml, preference)
     
-        # Debug 資訊顯示
-        if show_debug:
-            st.markdown("### 🛠️ 開發者除錯資訊")
-            st.write("解析後的 DataFrame (前 10 筆)：")
-            debug_cols = ["airline", "flight_no", "price", "total_price", "adults", "departure_time", "arrival_time", "data_source"]
-            st.dataframe(df_recommended[[c for c in debug_cols if c in df_recommended.columns]].head(10))
-        
-            if "_raw_fast_flights" in df_recommended.columns:
-                st.write("fast-flights 原始回傳結果 (第一筆)：")
-                st.code(df_recommended.iloc[0]["_raw_fast_flights"], language="text")
-
         # 5. AI KMeans 分群
         n_clusters = min(4, max(2, len(df_recommended) - 1))
         if len(df_recommended) > 2:
@@ -935,7 +925,14 @@ book_btn_html = f"""
 # ── 最推薦卡片 ──
 f_date_top = top_flight.get('flight_date', target_date)
 top_h, top_m = divmod(int(top_flight['duration_minutes']), 60)
-stops_text = "直飛航班" if top_flight['stops'] == 0 else f"轉機 {top_flight['stops']} 次"
+top_transit = top_flight.get('transit_airport', '')
+if top_flight['stops'] == 0:
+    stops_text = "直飛航班"
+elif top_transit:
+    transit_name = get_airport_display_name(top_transit)
+    stops_text = f"轉機 {top_flight['stops']} 次（經 {transit_name})"
+else:
+    stops_text = f"轉機 {top_flight['stops']} 次"
 
 flight_no_display = top_flight.get('flight_no', '')
 title_flight_no = f" {flight_no_display}" if flight_no_display and flight_no_display != "未知航班" else ""
@@ -1044,7 +1041,14 @@ with tab1:
                 
                 # 候補選擇改用與首選卡片相同的純文字精簡顯示，保持旅遊質感
                 cand_h, cand_m = divmod(int(row['duration_minutes']), 60)
-                cand_stops = "直飛航班" if row['stops'] == 0 else f"轉機 {row['stops']} 次"
+                cand_transit = row.get('transit_airport', '')
+                if row['stops'] == 0:
+                    cand_stops = "直飛航班"
+                elif cand_transit:
+                    cand_transit_name = get_airport_display_name(cand_transit)
+                    cand_stops = f"轉機 {row['stops']} 次（經 {cand_transit_name}）"
+                else:
+                    cand_stops = f"轉機 {row['stops']} 次"
                 
                 # 新增票價明細與訂票按鈕於候補卡片中
                 total_p = row.get('total_price', row['price'])

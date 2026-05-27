@@ -31,6 +31,7 @@ from src.visualization import (
     plot_kmeans_scatter
 )
 from src.flight_scraper import fetch_scraped_flights
+from src.airline_classifier import classify_airline, LCC_AIRLINES, FSC_AIRLINES
 
 # ── Streamlit 頁面設定 (隱藏側邊欄) ──────────────────────────────────
 st.set_page_config(
@@ -582,12 +583,20 @@ with st.container(border=True):
     # ── 第三排：進階服務與偏好 ──
     st.markdown("<hr style='margin: 15px 0; border: 0; border-top: 1px solid #e2e8f0;'>", unsafe_allow_html=True)
     
-    r3_c1, r3_c2 = st.columns([1.5, 1])
+    r3_c1, r3_c2, r3_c3 = st.columns([1.5, 1, 1])
     with r3_c1:
         preference = st.selectbox("🎯 AI 推薦優先順序", [PREF_PRICE, PREF_TIME, PREF_STOPS, PREF_BALANCE], index=3, 
                                   help="系統將根據您的偏好，為每一班機票進行智能打分與排序")
         
     with r3_c2:
+        airline_type_filter = st.selectbox(
+            "✈️ 航空公司類型",
+            options=["全部航空", "僅廣航 (LCC)", "僅全服務航空 (FSC)"],
+            index=0,
+            help="💰 廣航(LCC)：機票廣宜，行李、餐點須另購，適合輕裝旅行。 🏆 全服務航空(FSC)：含行李、機上餐點、媛樂系統，適合長途旅行。"
+        )
+
+    with r3_c3:
         st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True) # Spacer
         analyze_btn = st.button("✈️ 啟程搜尋航班", use_container_width=True)
 
@@ -809,6 +818,7 @@ if st.session_state.get('needs_compute', True):
             pca_df = None
             cluster_msg = "航班資料數量不足，已略過分群分析。"
 
+        df_result["airline_type"] = df_result["airline"].apply(classify_airline)
         df_result["排名"] = df_result.index + 1
     
     st.session_state['df_result'] = df_result
@@ -821,6 +831,24 @@ else:
     df_result = st.session_state['df_result']
     pca_df = st.session_state['pca_df']
     cluster_msg = st.session_state['cluster_msg']
+
+# 航空公司類型篩選
+if airline_type_filter == "僅廣航 (LCC)":
+    df_result_filtered = df_result[df_result["airline_type"] == "廣航 (LCC)"].copy()
+elif airline_type_filter == "僅全服務航空 (FSC)":
+    df_result_filtered = df_result[df_result["airline_type"] == "全服務航空 (FSC)"].copy()
+else:
+    df_result_filtered = df_result.copy()
+
+if df_result_filtered.empty:
+    airline_filter_label = "廣航" if airline_type_filter == "僅廣航 (LCC)" else "全服務航空"
+    st.warning(f"⚠️ 找不到符合「{airline_filter_label}」選項的航班，已展示全部航空結果。")
+    df_result_filtered = df_result.copy()
+
+# 重新排名
+df_result_filtered = df_result_filtered.reset_index(drop=True)
+df_result_filtered["排名"] = df_result_filtered.index + 1
+df_result = df_result_filtered
 
 # ═══════════════════════════════════════════════════════════════════════════
 # 分數閾值控制列
@@ -925,13 +953,10 @@ book_btn_html = f"""
 # ── 最推薦卡片 ──
 f_date_top = top_flight.get('flight_date', target_date)
 top_h, top_m = divmod(int(top_flight['duration_minutes']), 60)
-top_transit = top_flight.get('transit_airport', '')
 if top_flight['stops'] == 0:
     stops_text = "直飛航班"
-elif top_transit:
-    transit_name = get_airport_display_name(top_transit)
-    stops_text = f"轉機 {top_flight['stops']} 次（經 {transit_name})"
 else:
+    gf_detail_url = f"https://www.google.com/travel/flights?q=Flights%20to%20{destination_code}%20from%20{origin_code}%20on%20{f_date_top}"
     stops_text = f"轉機 {top_flight['stops']} 次"
 
 flight_no_display = top_flight.get('flight_no', '')
@@ -950,7 +975,8 @@ html_content = f"""
 📅 航班日期：<span style="font-weight:700; color:white;">{f_date_top}</span><br>
 🕒 <span style="font-weight:700; color:white;">{fmt_time(top_flight['departure_time'])}</span> 起飛 ➔ <span style="font-weight:700; color:white;">{fmt_time(top_flight['arrival_time'])}</span> 抵達 
 <span style="background:rgba(255,255,255,0.08); padding:2px 10px; border-radius:6px; font-size:0.9rem; color:#94a3b8;">{top_h}h {top_m}m</span><br>
-🔄 轉機資訊：<span style="background:rgba(255,255,255,0.12); padding:3px 12px; border-radius:20px; font-size:0.9rem; font-weight:700; color:#fbbf24; border:1px solid rgba(251,191,36,0.3);">{stops_text}</span>
+✈️ 航空公司類型：<span style="background:rgba(255,255,255,0.15); padding:3px 12px; border-radius:20px; font-size:0.9rem; font-weight:700; color:{'#38bdf8' if top_flight.get('airline_type','') == '全服務航空 (FSC)' else '#fbbf24' if top_flight.get('airline_type','') == '廣航 (LCC)' else '#94a3b8'}; border:1px solid rgba(255,255,255,0.2);">{top_flight.get('airline_type', '未知')}</span><br>
+🔄 轉機資訊：<span style="background:rgba(255,255,255,0.12); padding:3px 12px; border-radius:20px; font-size:0.9rem; font-weight:700; color:#fbbf24; border:1px solid rgba(251,191,36,0.3);">{stops_text}</span>{'<a href="' + gf_detail_url + '" target="_blank" style="margin-left:8px; font-size:0.82rem; color:#93c5fd; text-decoration:underline;">查看轉機詳情 ↗</a>' if top_flight['stops'] > 0 else ''}
 </div>
 <div class="vip-divider">
 <div style="margin-bottom: 10px;">
@@ -1041,13 +1067,10 @@ with tab1:
                 
                 # 候補選擇改用與首選卡片相同的純文字精簡顯示，保持旅遊質感
                 cand_h, cand_m = divmod(int(row['duration_minutes']), 60)
-                cand_transit = row.get('transit_airport', '')
                 if row['stops'] == 0:
                     cand_stops = "直飛航班"
-                elif cand_transit:
-                    cand_transit_name = get_airport_display_name(cand_transit)
-                    cand_stops = f"轉機 {row['stops']} 次（經 {cand_transit_name}）"
                 else:
+                    cand_gf_url = f"https://www.google.com/travel/flights?q=Flights%20to%20{destination_code}%20from%20{origin_code}%20on%20{row.get('flight_date', target_date)}"
                     cand_stops = f"轉機 {row['stops']} 次"
                 
                 # 新增票價明細與訂票按鈕於候補卡片中
@@ -1061,7 +1084,8 @@ with tab1:
     <span style="font-weight:800; color:#0f172a;">🛫 {origin_display} ➔ 🛬 {dest_display}</span><br>
     🕒 <span style="font-weight:700;">{fmt_time(row['departure_time'])}</span> 起飛 ➔ <span style="font-weight:700;">{fmt_time(row['arrival_time'])}</span> 抵達 ({cand_h}小時 {cand_m}分鐘)<br>
     📅 航班日期：<span style="font-weight:700;">{f_date}</span><br>
-    🔄 轉機資訊：<span style="background:#e2e8f0; padding:2px 8px; border-radius:4px; font-size:1rem;">{cand_stops}</span><br>
+    🔄 轉機資訊：<span style="background:#e2e8f0; padding:2px 8px; border-radius:4px; font-size:1rem;">{cand_stops}</span>{'<a href="' + cand_gf_url + '" target="_blank" style="margin-left:6px; font-size:0.82rem; color:#2563eb;">查看轉機詳情 ↗</a>' if row['stops'] > 0 else ''}<br>
+    ✈️ 航空別：<span style="background:#e2e8f0; padding:2px 8px; border-radius:4px; font-size:0.9rem; color:{'#0f766e' if row.get('airline_type','') == '全服務航空 (FSC)' else '#b45309' if row.get('airline_type','') == '廣航 (LCC)' else '#64748b'};">{row.get('airline_type', '未知')}</span><br>
 </div>
 <div style="margin-top: 15px; padding: 15px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0;">
 <div style="font-size: 0.95rem; color: #475569; margin-bottom: 5px;">💰 <b>單人票價</b>：{currency} {row['price']:,.0f} &nbsp;|&nbsp; 👥 <b>人數</b>：{int(adults_c)}</div>

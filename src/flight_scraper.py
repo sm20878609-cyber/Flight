@@ -11,6 +11,7 @@ import threading
 from typing import Tuple, Optional
 from fast_flights import get_flights, FlightData, Passengers
 from curl_cffi import requests
+from .airline_classifier import classify_airline
 
 _FR24_CACHE = {}
 _FR24_LOCK = threading.Lock()
@@ -138,59 +139,6 @@ def get_realistic_flight_no(airline: str, origin: str, dest: str, dep_time: str)
     return ""
 
 
-def get_transit_airports(airline: str, origin: str, destination: str) -> str:
-    """根據航空公司與航線推斷可能的轉機機場（常見樞紐）"""
-    primary = airline.split(",")[0].strip()
-
-    # 航空公司常用樞紐對照表
-    airline_hubs = {
-        "EVA Air": ["TPE"],
-        "China Airlines": ["TPE"],
-        "Cathay Pacific": ["HKG"],
-        "Singapore Airlines": ["SIN"],
-        "ANA": ["NRT", "HND"],
-        "JAL": ["NRT", "HND"],
-        "Thai Airways": ["BKK"],
-        "Emirates": ["DXB"],
-        "Qatar Airways": ["DOH"],
-        "Korean Air": ["ICN"],
-        "Asiana Airlines": ["ICN"],
-        "Scoot": ["SIN"],
-        "Jetstar": ["SYD", "MEL", "SIN"],
-        "Jetstar Asia": ["SIN"],
-        "AirAsia": ["KUL"],
-        "AirAsia X": ["KUL"],
-        "Batik Air": ["KUL"],
-        "Malaysian Airlines": ["KUL"],
-        "Vietnam Airlines": ["HAN", "SGN"],
-        "VietJet Air": ["SGN", "HAN"],
-        "Philippine Airlines": ["MNL"],
-        "XiamenAir": ["XMN"],
-        "China Eastern": ["PVG", "SHA"],
-        "China Southern": ["CAN"],
-        "Air China": ["PEK"],
-        "Hong Kong Airlines": ["HKG"],
-        "Hong Kong Express": ["HKG"],
-        "Cebu Pacific": ["MNL"],
-        "Peach Aviation": ["KIX", "NRT"],
-        "Spring Airlines": ["SHA", "PVG"],
-        "Lucky Air": ["KMG"],
-        "Starlux Airlines": ["TPE"],
-        "Tigerair Taiwan": ["TPE"],
-        "Jeju Air": ["ICN"],
-        "Jin Air": ["ICN"],
-    }
-
-    hubs = airline_hubs.get(primary, [])
-
-    # 移除出發地和目的地本身
-    transit_candidates = [h for h in hubs if h != origin and h != destination]
-
-    if transit_candidates:
-        return transit_candidates[0]
-    return ""
-
-
 def fetch_scraped_flights(
     origin: str,
     destination: str,
@@ -258,6 +206,7 @@ def fetch_scraped_flights(
                 if total_duration_minutes == 0: total_duration_minutes = 120
                     
                 airline = flight.name
+                airline_type = classify_airline(airline)
                 
                 try: stops_val = int(flight.stops)
                 except (ValueError, TypeError): stops_val = 0
@@ -270,20 +219,17 @@ def fetch_scraped_flights(
                 route_detail = f"{origin} → {destination}" if stops_val == 0 else f"{origin} → 轉機({stops_val}次) → {destination}"
                 dur_display = f"{hours} 小時 {minutes} 分鐘" if hours > 0 else f"{minutes} 分鐘"
                 
-                # 推斷轉機機場
-                transit_airport = ""
-                if stops_val > 0:
-                    transit_airport = get_transit_airports(airline, origin, destination)
-                
                 if stops_val == 0:
                     segment_detail = f"{origin}|{flight.departure}|{destination}|{flight.arrival}|{dur_display}|{flight_no}"
                 else:
-                    transit_info = (f"經 {transit_airport}") if transit_airport else (f"{stops_val} 次轉機")
-                    segment_detail = f"{origin}|{flight.departure}|{destination}|{flight.arrival}|{dur_display}|{transit_info}"
+                    segment_detail = f"{origin}|{flight.departure}|{destination}|{flight.arrival}|{dur_display}|轉機 {stops_val} 次"
+                
+                transit_airport = ""  # 無法從 fast-flights 取得轉機機場，保留欄位相容
                     
                 all_rows.append({
                     "flight_id": f"SCR_{date.replace('-','')}_{i+1:03d}",
                     "airline": airline,
+                    "airline_type": airline_type,
                     "flight_no": flight_no,
                     "origin": origin,
                     "destination": destination,

@@ -209,16 +209,36 @@ footer { visibility: hidden; }
     letter-spacing: 0.5px;
     text-transform: uppercase;
 }
-.stSelectbox > div > div, .stDateInput > div > div {
+/* 外框與背景 */
+.stSelectbox > div > div, .stDateInput > div > div, .stNumberInput > div > div {
     border-radius: 12px !important;
     border-color: rgba(255,255,255,0.15) !important;
     background: rgba(255,255,255,0.06) !important;
-    color: #f1f5f9 !important;
     transition: all 0.2s ease !important;
 }
-.stSelectbox > div > div:focus-within, .stDateInput > div > div:focus-within {
+.stSelectbox > div > div:focus-within, .stDateInput > div > div:focus-within, .stNumberInput > div > div:focus-within {
     border-color: rgba(59,130,246,0.6) !important;
     box-shadow: 0 0 0 3px rgba(59,130,246,0.15) !important;
+}
+/* 強制輸入文字顏色為白色 */
+div[data-baseweb="select"] span, 
+div[data-baseweb="select"] div,
+.stDateInput input, 
+.stNumberInput input, 
+.stTextInput input {
+    color: #f8fafc !important;
+}
+/* 強制 Select 下拉選單的背景色與文字 */
+ul[data-baseweb="menu"] {
+    background: #1e293b !important;
+    color: #f8fafc !important;
+}
+li[data-baseweb="menu-item"] {
+    color: #f8fafc !important;
+    background: transparent !important;
+}
+li[data-baseweb="menu-item"]:hover {
+    background: #3b82f6 !important;
 }
 
 /* ─── 搜尋按鈕 ─── */

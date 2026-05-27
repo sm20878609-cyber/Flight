@@ -210,10 +210,15 @@ footer { visibility: hidden; }
     text-transform: uppercase;
 }
 /* 外框與背景 */
-.stSelectbox > div > div, .stDateInput > div > div, .stNumberInput > div > div {
+.stSelectbox > div > div, 
+.stDateInput > div > div, 
+.stNumberInput > div > div,
+div[data-baseweb="input"],
+div[data-baseweb="base-input"] {
     border-radius: 12px !important;
     border-color: rgba(255,255,255,0.15) !important;
-    background: rgba(255,255,255,0.06) !important;
+    background: rgba(15,23,42,0.6) !important;
+    background-color: rgba(15,23,42,0.6) !important;
     transition: all 0.2s ease !important;
 }
 .stSelectbox > div > div:focus-within, .stDateInput > div > div:focus-within, .stNumberInput > div > div:focus-within {
@@ -227,6 +232,17 @@ div[data-baseweb="select"] div,
 .stNumberInput input, 
 .stTextInput input {
     color: #f8fafc !important;
+    -webkit-text-fill-color: #f8fafc !important;
+}
+/* 修正 Number Input 的加減按鈕 */
+.stNumberInput button {
+    background: transparent !important;
+    color: #f8fafc !important;
+    border-color: rgba(255,255,255,0.15) !important;
+}
+.stNumberInput button:hover {
+    background: rgba(255,255,255,0.1) !important;
+    color: #38bdf8 !important;
 }
 /* 強制 Select 下拉選單的背景色與文字 */
 ul[data-baseweb="menu"] {

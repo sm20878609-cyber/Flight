@@ -201,13 +201,18 @@ footer { visibility: hidden; }
 }
 
 /* ─── 輸入元件 ─── */
-.stSelectbox label, .stDateInput label, .stNumberInput label, .stTextInput label {
+.stSelectbox label, .stDateInput label, .stNumberInput label, .stTextInput label, .stCheckbox label {
     font-weight: 700 !important;
     color: rgba(226,232,240,0.9) !important;
     font-size: 0.88rem !important;
     margin-bottom: 6px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+}
+.stCheckbox label {
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 0.95rem !important;
 }
 /* 外框與背景 */
 .stSelectbox > div > div, 
@@ -754,9 +759,9 @@ with st.container(border=True):
         max_stops = st.selectbox("🔄 最大轉機次數", [0, 1, 2, 3], index=1, format_func=lambda x: "直飛 (推薦)" if x==0 else f"{x} 次轉機")
 
     # ── 第三排：進階服務與偏好 ──
-    st.markdown("<hr style='margin: 15px 0; border: 0; border-top: 1px solid #e2e8f0;'>", unsafe_allow_html=True)
+    st.markdown("<hr style='margin: 15px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.08);'>", unsafe_allow_html=True)
     
-    r3_c1, r3_c2, r3_c3 = st.columns([1.5, 1, 1])
+    r3_c1, r3_c2 = st.columns(2)
     with r3_c1:
         preference = st.selectbox("🎯 AI 推薦優先順序", [PREF_PRICE, PREF_TIME, PREF_STOPS, PREF_BALANCE], index=3, 
                                   help="系統將根據您的偏好，為每一班機票進行智能打分與排序")
@@ -764,13 +769,19 @@ with st.container(border=True):
     with r3_c2:
         airline_type_filter = st.selectbox(
             "✈️ 航空公司類型",
-            options=["全部航空", "僅廣航 (LCC)", "僅全服務航空 (FSC)"],
+            options=["全部航空", "僅廉航 (LCC)", "僅全服務航空 (FSC)"],
             index=0,
-            help="💰 廣航(LCC)：機票廣宜，行李、餐點須另購，適合輕裝旅行。 🏆 全服務航空(FSC)：含行李、機上餐點、媛樂系統，適合長途旅行。"
+            help="💰 廉航(LCC)：機票便宜，行李、餐點須另購，適合輕裝旅行。 🏆 全服務航空(FSC)：含行李、機上餐點、娛樂系統，適合長途旅行。"
         )
 
-    with r3_c3:
-        st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True) # Spacer
+    # ── 第四排：加購服務 ──
+    r4_c1, r4_c2, r4_c3 = st.columns([1, 1, 1])
+    with r4_c1:
+        add_baggage = st.checkbox("🧳 託運行李 (預估 +TWD 900/單趟)", value=False, help="傳統航空(FSC)通常已包含基本行李。此加購費僅會套用至廉航(LCC)的計價中。")
+    with r4_c2:
+        add_meal = st.checkbox("🍱 機上餐點 (預估 +TWD 400/單趟)", value=False, help="傳統航空(FSC)通常已包含機上餐飲。此加購費僅會套用至廉航(LCC)的計價中。")
+    with r4_c3:
+        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True) # Spacer
         analyze_btn = st.button("✈️ 啟程搜尋航班", use_container_width=True)
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -953,11 +964,30 @@ if st.session_state.get('needs_compute', True):
                 st.stop()
             st.success("✅ " + msg)
 
-        # 確保備援資料有 query_date
+        # 確認日期欄位
         if "query_date" not in df_raw.columns:
-            df_raw["query_date"] = "未知日期"
+            df_raw["query_date"] = "未知"
 
-        # 2. 資料預處理
+        # 1.5 處理加購服務邏輯 (Baggage & Meals)
+        def apply_addons(row):
+            addon_unit_cost = 0
+            # 只有 LCC 廉航才收取加購費用
+            if row.get('airline_type') == '廉航 (LCC)':
+                if add_baggage: addon_unit_cost += 900
+                if add_meal: addon_unit_cost += 400
+            
+            # 保存原本的基本票價以供 UI 顯示
+            if 'base_price' not in row:
+                row['base_price'] = row['price']
+                
+            row['addon_unit_cost'] = addon_unit_cost
+            row['price'] = row['base_price'] + addon_unit_cost
+            row['total_price'] = row['price'] * row.get('adults', 1)
+            return row
+            
+        df_raw = df_raw.apply(apply_addons, axis=1)
+
+        # 2. 資料預處理 (此時的 price 已經包含加購費用，供 ML 計算使用)
         df_clean = full_preprocessing(df_raw)
     
         # 3. 過濾條件
@@ -1157,15 +1187,19 @@ html_content = f"""
 </div>
 <div style="display:flex; align-items:flex-end; gap:20px; flex-wrap:wrap;">
     <div>
-        <div style="color:#94a3b8; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">單人票價</div>
-        <div style="color:#e2e8f0; font-size:1.25rem; font-weight:700;">{currency} {top_flight['price']:,.0f}</div>
+        <div style="color:#94a3b8; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">基本票價 (單人)</div>
+        <div style="color:#e2e8f0; font-size:1.25rem; font-weight:700;">{currency} {top_flight.get('base_price', top_flight['price']):,.0f}</div>
     </div>
+    {f'''<div>
+        <div style="color:#94a3b8; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">加購服務 (單人)</div>
+        <div style="color:#fbbf24; font-size:1.25rem; font-weight:700;">+{currency} {top_flight['addon_unit_cost']:,.0f}</div>
+    </div>''' if top_flight.get('addon_unit_cost', 0) > 0 else ""}
     <div>
         <div style="color:#94a3b8; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">人數</div>
         <div style="color:#e2e8f0; font-size:1.25rem; font-weight:700;">{int(adults_val)} 位成人</div>
     </div>
     <div>
-        <div style="color:#94a3b8; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">總計票價</div>
+        <div style="color:#94a3b8; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">總計票價 (含加購)</div>
         <div style="font-size:2.2rem; font-weight:900; font-family:'Outfit',sans-serif; color:#f59e0b; line-height:1;">{currency} {total_price_val:,.0f}</div>
     </div>
     <div>
@@ -1261,8 +1295,8 @@ with tab1:
     ✈️ 航空別：<span style="background:rgba(255,255,255,0.12); padding:2px 8px; border-radius:4px; font-size:0.9rem; font-weight:600; color:{'#2dd4bf' if row.get('airline_type','') == '全服務航空 (FSC)' else '#fbbf24' if row.get('airline_type','') == '廉航 (LCC)' else '#94a3b8'};">{row.get('airline_type', '未知')}</span><br>
 </div>
 <div style="margin-top: 15px; padding: 15px; border-radius: 12px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.08);">
-<div style="font-size: 0.95rem; color: #94a3b8; margin-bottom: 5px;">💰 <b>單人票價</b>：{currency} {row['price']:,.0f} &nbsp;|&nbsp; 👥 <b>人數</b>：{int(adults_c)}</div>
-<div style="font-size: 1.1rem; color: #e2e8f0;">💳 <b>總計票價</b>：<b style="color: #f97316; font-size: 1.3rem;">{currency} {total_p:,.0f}</b></div>
+<div style="font-size: 0.95rem; color: #94a3b8; margin-bottom: 5px;">💰 <b>基本單價</b>：{currency} {row.get('base_price', row['price']):,.0f} &nbsp;|&nbsp; 🛍️ <b>加購服務</b>：{currency} {row.get('addon_unit_cost', 0):,.0f} &nbsp;|&nbsp; 👥 <b>人數</b>：{int(adults_c)}</div>
+<div style="font-size: 1.1rem; color: #e2e8f0;">💳 <b>總計票價 (含加購)</b>：<b style="color: #f97316; font-size: 1.3rem;">{currency} {total_p:,.0f}</b></div>
 <a href="{gf_url_cand}" target="_blank" style="text-decoration: none; display: inline-block; margin-top: 12px; width: 100%;">
 <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 8px 15px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; text-align: center; transition: all 0.2s;">
 ✈️ 前往 Google Flights 查看與訂票

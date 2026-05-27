@@ -1,4 +1,4 @@
-"""
+﻿"""
 app.py
 AI 智慧航班機票搜尋與推薦系統 - Streamlit 主程式
 整合 fast-flights 即時航班查詢與 AI 推薦排序 (高質感旅遊風版)
@@ -79,7 +79,7 @@ footer { visibility: hidden; }
     background-position: center 40%;
     padding: 90px 20px 80px 20px;
     text-align: center;
-    color: white;
+    color: #0f172a;
     margin-top: -60px;
     margin-bottom: 40px;
     margin-left: -40px;
@@ -151,7 +151,7 @@ footer { visibility: hidden; }
 .header-subtitle {
     font-size: 1.15rem;
     font-weight: 400;
-    color: rgba(226,232,240,0.85);
+    color: rgba(15,23,42,0.85);
     max-width: 680px;
     margin: 0 auto;
     line-height: 1.8;
@@ -177,7 +177,7 @@ footer { visibility: hidden; }
 }
 .header-stat-label {
     font-size: 0.78rem;
-    color: rgba(226,232,240,0.65);
+    color: rgba(15,23,42,0.65);
     letter-spacing: 1.5px;
     text-transform: uppercase;
     margin-top: 3px;
@@ -186,24 +186,24 @@ footer { visibility: hidden; }
 /* ─── 玻璃搜尋面板 ─── */
 [data-testid="stVerticalBlockBorderWrapper"] {
     border-radius: 24px !important;
-    border: 1px solid rgba(255,255,255,0.12) !important;
-    background: rgba(15,23,42,0.75) !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    background: rgba(255,255,255,0.75) !important;
     backdrop-filter: blur(24px) !important;
     -webkit-backdrop-filter: blur(24px) !important;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.08) inset !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 1px 0 rgba(0,0,0,0.06) inset !important;
     padding: 32px 36px !important;
     transition: all 0.35s cubic-bezier(0.4,0,0.2,1) !important;
 }
 [data-testid="stVerticalBlockBorderWrapper"]:hover {
-    box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.1) inset !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 1px 0 rgba(0,0,0,0.08) inset !important;
     transform: translateY(-3px);
-    border-color: rgba(255,255,255,0.18) !important;
+    border-color: rgba(0,0,0,0.15) !important;
 }
 
 /* ─── 輸入元件 ─── */
 .stSelectbox label, .stDateInput label, .stNumberInput label, .stTextInput label, .stCheckbox label {
     font-weight: 700 !important;
-    color: rgba(226,232,240,0.9) !important;
+    color: rgba(15,23,42,0.9) !important;
     font-size: 0.88rem !important;
     margin-bottom: 6px;
     letter-spacing: 0.5px;
@@ -221,9 +221,9 @@ footer { visibility: hidden; }
 div[data-baseweb="input"],
 div[data-baseweb="base-input"] {
     border-radius: 12px !important;
-    border-color: rgba(255,255,255,0.15) !important;
-    background: rgba(15,23,42,0.6) !important;
-    background-color: rgba(15,23,42,0.6) !important;
+    border-color: rgba(0,0,0,0.12) !important;
+    background: rgba(255,255,255,0.6) !important;
+    background-color: rgba(255,255,255,0.6) !important;
     transition: all 0.2s ease !important;
 }
 .stSelectbox > div > div:focus-within, .stDateInput > div > div:focus-within, .stNumberInput > div > div:focus-within {
@@ -236,26 +236,26 @@ div[data-baseweb="select"] div,
 .stDateInput input, 
 .stNumberInput input, 
 .stTextInput input {
-    color: #f8fafc !important;
-    -webkit-text-fill-color: #f8fafc !important;
+    color:#0f172a !important;
+    -webkit-text-fill-color:#0f172a !important;
 }
 /* 修正 Number Input 的加減按鈕 */
 .stNumberInput button {
     background: transparent !important;
-    color: #f8fafc !important;
-    border-color: rgba(255,255,255,0.15) !important;
+    color:#0f172a !important;
+    border-color: rgba(0,0,0,0.12) !important;
 }
 .stNumberInput button:hover {
-    background: rgba(255,255,255,0.1) !important;
+    background: rgba(0,0,0,0.08) !important;
     color: #38bdf8 !important;
 }
 /* 強制 Select 下拉選單的背景色與文字 */
 ul[data-baseweb="menu"] {
-    background: #1e293b !important;
-    color: #f8fafc !important;
+    background: #ffffff !important;
+    color:#0f172a !important;
 }
 li[data-baseweb="menu-item"] {
-    color: #f8fafc !important;
+    color:#0f172a !important;
     background: transparent !important;
 }
 li[data-baseweb="menu-item"]:hover {
@@ -272,7 +272,7 @@ li[data-baseweb="menu-item"]:hover {
     font-weight: 900 !important;
     font-size: 1.1rem !important;
     padding: 0.9rem 2rem !important;
-    box-shadow: 0 8px 25px rgba(234,88,12,0.4), 0 0 0 1px rgba(255,255,255,0.1) inset !important;
+    box-shadow: 0 8px 25px rgba(234,88,12,0.4), 0 0 0 1px rgba(0,0,0,0.08) inset !important;
     transition: all 0.4s cubic-bezier(0.4,0,0.2,1) !important;
     letter-spacing: 1.5px;
     text-transform: uppercase;
@@ -290,12 +290,12 @@ li[data-baseweb="menu-item"]:hover {
 
 /* ─── Metric Cards ─── */
 .metric-container {
-    background: linear-gradient(145deg, rgba(15,23,42,0.8) 0%, rgba(30,41,59,0.9) 100%);
+    background: linear-gradient(145deg, rgba(255,255,255,0.8) 0%, rgba(241,245,249,0.9) 100%);
     border-radius: 20px;
     padding: 28px 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.06) inset;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 1px 0 rgba(0,0,0,0.05) inset;
     text-align: center;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(0,0,0,0.06);
     border-bottom: 3px solid transparent;
     margin-bottom: 25px;
     transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
@@ -347,7 +347,7 @@ li[data-baseweb="menu-item"]:hover {
 /* ─── Top VIP Flight Card ─── */
 .top-flight-card {
     background:
-        linear-gradient(135deg, rgba(12,22,48,0.98) 0%, rgba(22,35,78,0.95) 50%, rgba(12,22,48,0.98) 100%);
+        linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(241,245,249,0.95) 50%, rgba(255,255,255,0.98) 100%);
     border: 1px solid rgba(251,191,36,0.35);
     border-left: 5px solid #fbbf24;
     border-radius: 28px;
@@ -356,10 +356,10 @@ li[data-baseweb="menu-item"]:hover {
     box-shadow:
         0 30px 60px rgba(0,0,0,0.4),
         0 0 0 1px rgba(251,191,36,0.1) inset,
-        inset 0 1px 0 rgba(255,255,255,0.05);
+        inset 0 1px 0 rgba(0,0,0,0.03);
     position: relative;
     overflow: hidden;
-    color: #f8fafc;
+    color:#0f172a;
     transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
     animation: fadeInUp 0.6s ease both;
 }
@@ -407,7 +407,7 @@ li[data-baseweb="menu-item"]:hover {
 .vip-divider {
     margin-top: 22px;
     padding-top: 22px;
-    border-top: 1px solid rgba(255,255,255,0.07);
+    border-top: 1px solid rgba(0,0,0,0.06);
 }
 
 /* ─── 比價按鈕區塊 ─── */
@@ -451,7 +451,7 @@ li[data-baseweb="menu-item"]:hover {
 }
 .btn-gf:hover {
     background: #4285f4;
-    color: white;
+    color: #0f172a;
     box-shadow: 0 6px 20px rgba(66,133,244,0.45);
     transform: translateY(-3px);
 }
@@ -462,7 +462,7 @@ li[data-baseweb="menu-item"]:hover {
 }
 .btn-sky:hover {
     background: #0094d8;
-    color: white;
+    color: #0f172a;
     box-shadow: 0 6px 20px rgba(0,148,216,0.45);
     transform: translateY(-3px);
 }
@@ -473,14 +473,14 @@ li[data-baseweb="menu-item"]:hover {
 }
 .btn-trip:hover {
     background: #00a46d;
-    color: white;
+    color: #0f172a;
     box-shadow: 0 6px 20px rgba(0,164,109,0.45);
     transform: translateY(-3px);
 }
 
 /* ─── AI Info Card ─── */
 .ai-info-card {
-    background: linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(30,41,59,0.9) 100%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(241,245,249,0.9) 100%);
     border: 1px solid rgba(59,130,246,0.2);
     border-left: 5px solid #3b82f6;
     border-radius: 22px;
@@ -509,7 +509,7 @@ li[data-baseweb="menu-item"]:hover {
 }
 .ai-info-heading {
     margin: 0;
-    color: #e2e8f0;
+    color:#1e293b;
     font-weight: 800;
     font-family: 'Outfit', sans-serif;
     letter-spacing: 0.3px;
@@ -531,8 +531,8 @@ li[data-baseweb="menu-item"]:hover {
 
 /* ─── 候補選擇卡片 ─── */
 .alt-flight-card {
-    background: linear-gradient(145deg, rgba(15,23,42,0.85) 0%, rgba(22,35,58,0.9) 100%);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(145deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.9) 100%);
+    border: 1px solid rgba(0,0,0,0.06);
     border-radius: 20px;
     padding: 24px 28px;
     margin-bottom: 12px;
@@ -548,11 +548,11 @@ li[data-baseweb="menu-item"]:hover {
 /* ─── 頁籤美化 ─── */
 .stTabs [data-baseweb="tab-list"] {
     gap: 6px;
-    background: rgba(15,23,42,0.6);
+    background: rgba(255,255,255,0.6);
     border-radius: 16px;
     padding: 7px;
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(0,0,0,0.06);
 }
 .stTabs [data-baseweb="tab"] {
     border-radius: 11px;
@@ -601,7 +601,7 @@ li[data-baseweb="menu-item"]:hover {
 .section-heading {
     font-size: 1.05rem;
     font-weight: 800;
-    color: #e2e8f0;
+    color:#1e293b;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
@@ -610,16 +610,16 @@ li[data-baseweb="menu-item"]:hover {
 }
 
 /* ─── HR 分隔線 ─── */
-hr { border-color: rgba(255,255,255,0.06) !important; }
+hr { border-color: rgba(0,0,0,0.05) !important; }
 
 /* ─── Expander 美化 ─── */
 .streamlit-expanderHeader {
-    background: rgba(30,41,59,0.6) !important;
+    background: rgba(241,245,249,0.6) !important;
     border-radius: 14px !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
+    border: 1px solid rgba(0,0,0,0.06) !important;
     padding: 12px 18px !important;
     transition: all 0.25s ease !important;
-    color: #e2e8f0 !important;
+    color:#1e293b !important;
     font-weight: 700 !important;
 }
 .streamlit-expanderHeader:hover {
@@ -628,36 +628,36 @@ hr { border-color: rgba(255,255,255,0.06) !important; }
     transform: translateX(3px);
 }
 .streamlit-expanderContent {
-    border: 1px solid rgba(255,255,255,0.06) !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
     border-top: none !important;
     border-radius: 0 0 14px 14px !important;
-    background: rgba(15,23,42,0.5) !important;
+    background: rgba(255,255,255,0.5) !important;
     padding: 20px !important;
 }
 
 /* ─── Warning / Info boxes ─── */
 .stWarning, .stInfo, .stSuccess {
     border-radius: 14px !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
     backdrop-filter: blur(10px) !important;
 }
 
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: rgba(15,23,42,0.5); border-radius: 3px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.5); border-radius: 3px; }
 ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #3b82f6, #8b5cf6); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #60a5fa, #a78bfa); }
 
 /* ─── 文字顏色適應暗色 ─── */
 .stMarkdown p, .stMarkdown div, .stMarkdown span, h1, h2, h3, h4, h5, h6 {
-    color: #e2e8f0;
+    color:#1e293b;
 }
-p { color: #cbd5e1; }
+p { color:#334155; }
 
 /* ─── 分數控制列美化 ─── */
 .score-control-bar {
-    background: linear-gradient(135deg, rgba(15,23,42,0.85), rgba(30,41,59,0.85));
-    border: 1px solid rgba(255,255,255,0.1);
+    background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(241,245,249,0.85));
+    border: 1px solid rgba(0,0,0,0.08);
     border-radius: 18px;
     padding: 18px 24px;
     margin: 16px 0;
@@ -759,7 +759,7 @@ with st.container(border=True):
         max_stops = st.selectbox("🔄 最大轉機次數", [0, 1, 2, 3], index=1, format_func=lambda x: "直飛 (推薦)" if x==0 else f"{x} 次轉機")
 
     # ── 第三排：進階服務與偏好 ──
-    st.markdown("<hr style='margin: 15px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.08);'>", unsafe_allow_html=True)
+    st.markdown("<hr style='margin: 15px 0; border: 0; border-top: 1px solid rgba(0,0,0,0.06);'>", unsafe_allow_html=True)
     
     r3_c1, r3_c2 = st.columns(2)
     with r3_c1:
@@ -1058,12 +1058,12 @@ df_result = df_result_filtered
 # ═══════════════════════════════════════════════════════════════════════════
 st.markdown("""
 <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;
-            background:rgba(15,23,42,0.85); backdrop-filter:blur(12px);
-            border:1px solid rgba(255,255,255,0.12); border-radius:16px;
+            background:rgba(255,255,255,0.85); backdrop-filter:blur(12px);
+            border:1px solid rgba(0,0,0,0.08); border-radius:16px;
             padding:16px 24px; margin-bottom:28px;
             box-shadow:0 4px 15px rgba(0,0,0,0.3);">
     <span style="font-size:1.3rem;">🎯</span>
-    <span style="font-weight:800; color:#e2e8f0; font-size:1rem; white-space:nowrap;">
+    <span style="font-weight:800; color:#1e293b; font-size:1rem; white-space:nowrap;">
         AI 分數閾值篩選
     </span>
 </div>
@@ -1147,7 +1147,7 @@ else:
 gf_url = f"https://www.google.com/travel/flights?q=Flights%20to%20{destination_code}%20from%20{origin_code}%20on%20{top_flight.get('flight_date', target_date)}"
 book_btn_html = f"""
 <a href="{gf_url}" target="_blank" style="text-decoration: none; display: inline-block; margin-top: 15px;">
-    <div style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; padding: 10px 24px; border-radius: 50px; font-weight: 700; font-size: 1rem; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); transition: all 0.3s ease; text-align: center;">
+    <div style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #0f172a; padding: 10px 24px; border-radius: 50px; font-weight: 700; font-size: 1rem; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); transition: all 0.3s ease; text-align: center;">
         ✈️ 前往 Google Flights 查看與訂票
     </div>
 </a>
@@ -1166,20 +1166,30 @@ flight_no_display = top_flight.get('flight_no', '')
 title_flight_no = f" {flight_no_display}" if flight_no_display and flight_no_display != "未知航班" else ""
 compare_links = build_compare_links(origin_code, destination_code, f_date_top, adults_val)
 
+top_addon_cost = top_flight.get('addon_unit_cost', 0)
+top_addon_html = ""
+if top_addon_cost > 0:
+    top_addon_html = f"""
+    <div>
+        <div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">加購服務 (單人)</div>
+        <div style="color:#fbbf24; font-size:1.25rem; font-weight:700;">+{currency} {top_addon_cost:,.0f}</div>
+    </div>
+    """
+
 html_content = f"""
 <div class="top-flight-card">
 <div class="top-flight-title">🏆 首選推薦：{top_flight['airline']}{title_flight_no}</div>
-<div style="font-size: 1.12rem; line-height: 2.0; color: #cbd5e1;">
+<div style="font-size: 1.12rem; line-height: 2.0; color:#334155;">
 <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
-    <span style="font-size:1.35rem; font-weight:900; color:#f8fafc;">🛫 {origin_display}</span>
+    <span style="font-size:1.35rem; font-weight:900; color:#0f172a;">🛫 {origin_display}</span>
     <span style="color:#fbbf24; font-size:1.5rem;">&#x2794;</span>
-    <span style="font-size:1.35rem; font-weight:900; color:#f8fafc;">🛬 {dest_display}</span>
+    <span style="font-size:1.35rem; font-weight:900; color:#0f172a;">🛬 {dest_display}</span>
 </div>
-📅 航班日期：<span style="font-weight:700; color:white;">{f_date_top}</span><br>
-🕒 <span style="font-weight:700; color:white;">{fmt_time(top_flight['departure_time'])}</span> 起飛 ➔ <span style="font-weight:700; color:white;">{fmt_time(top_flight['arrival_time'])}</span> 抵達 
-<span style="background:rgba(255,255,255,0.08); padding:2px 10px; border-radius:6px; font-size:0.9rem; color:#94a3b8;">{top_h}h {top_m}m</span><br>
-✈️ 航空公司類型：<span style="background:rgba(255,255,255,0.15); padding:3px 12px; border-radius:20px; font-size:0.9rem; font-weight:700; color:{'#38bdf8' if top_flight.get('airline_type','') == '全服務航空 (FSC)' else '#fbbf24' if top_flight.get('airline_type','') == '廣航 (LCC)' else '#94a3b8'}; border:1px solid rgba(255,255,255,0.2);">{top_flight.get('airline_type', '未知')}</span><br>
-🔄 轉機資訊：<span style="background:rgba(255,255,255,0.12); padding:3px 12px; border-radius:20px; font-size:0.9rem; font-weight:700; color:#fbbf24; border:1px solid rgba(251,191,36,0.3);">{stops_text}</span>{'<a href="' + gf_detail_url + '" target="_blank" style="margin-left:8px; font-size:0.82rem; color:#93c5fd; text-decoration:underline;">查看轉機詳情 ↗</a>' if top_flight['stops'] > 0 else ''}
+📅 航班日期：<span style="font-weight:700; color:#0f172a;">{f_date_top}</span><br>
+🕒 <span style="font-weight:700; color:#0f172a;">{fmt_time(top_flight['departure_time'])}</span> 起飛 ➔ <span style="font-weight:700; color:#0f172a;">{fmt_time(top_flight['arrival_time'])}</span> 抵達 
+<span style="background:rgba(0,0,0,0.06); padding:2px 10px; border-radius:6px; font-size:0.9rem; color:#475569;">{top_h}h {top_m}m</span><br>
+✈️ 航空公司類型：<span style="background:rgba(0,0,0,0.12); padding:3px 12px; border-radius:20px; font-size:0.9rem; font-weight:700; color:{'#38bdf8' if top_flight.get('airline_type','') == '全服務航空 (FSC)' else '#fbbf24' if top_flight.get('airline_type','') == '廣航 (LCC)' else '#94a3b8'}; border:1px solid rgba(0,0,0,0.18);">{top_flight.get('airline_type', '未知')}</span><br>
+🔄 轉機資訊：<span style="background:rgba(0,0,0,0.08); padding:3px 12px; border-radius:20px; font-size:0.9rem; font-weight:700; color:#fbbf24; border:1px solid rgba(251,191,36,0.3);">{stops_text}</span>{'<a href="' + gf_detail_url + '" target="_blank" style="margin-left:8px; font-size:0.82rem; color:#93c5fd; text-decoration:underline;">查看轉機詳情 ↗</a>' if top_flight['stops'] > 0 else ''}
 </div>
 <div class="vip-divider">
 <div style="margin-bottom: 10px;">
@@ -1187,28 +1197,25 @@ html_content = f"""
 </div>
 <div style="display:flex; align-items:flex-end; gap:20px; flex-wrap:wrap;">
     <div>
-        <div style="color:#94a3b8; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">基本票價 (單人)</div>
-        <div style="color:#e2e8f0; font-size:1.25rem; font-weight:700;">{currency} {top_flight.get('base_price', top_flight['price']):,.0f}</div>
+        <div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">基本票價 (單人)</div>
+        <div style="color:#1e293b; font-size:1.25rem; font-weight:700;">{currency} {top_flight.get('base_price', top_flight['price']):,.0f}</div>
     </div>
-    {f'''<div>
-        <div style="color:#94a3b8; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">加購服務 (單人)</div>
-        <div style="color:#fbbf24; font-size:1.25rem; font-weight:700;">+{currency} {top_flight['addon_unit_cost']:,.0f}</div>
-    </div>''' if top_flight.get('addon_unit_cost', 0) > 0 else ""}
+    {top_addon_html}
     <div>
-        <div style="color:#94a3b8; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">人數</div>
-        <div style="color:#e2e8f0; font-size:1.25rem; font-weight:700;">{int(adults_val)} 位成人</div>
+        <div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">人數</div>
+        <div style="color:#1e293b; font-size:1.25rem; font-weight:700;">{int(adults_val)} 位成人</div>
     </div>
     <div>
-        <div style="color:#94a3b8; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">總計票價 (含加購)</div>
+        <div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">總計票價 (含加購)</div>
         <div style="font-size:2.2rem; font-weight:900; font-family:'Outfit',sans-serif; color:#f59e0b; line-height:1;">{currency} {total_price_val:,.0f}</div>
     </div>
     <div>
-        <div style="color:#94a3b8; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">AI 評分</div>
+        <div style="color:#475569; font-size:0.82rem; margin-bottom:2px; text-transform:uppercase; letter-spacing:1px;">AI 評分</div>
         <div style="font-size:2.2rem; font-weight:900; font-family:'Outfit',sans-serif; color:#38bdf8; line-height:1;">{top_flight['recommendation_score']:.1f}</div>
     </div>
 </div>
 <div style="margin-top: 16px; background: rgba(59,130,246,0.08); padding: 12px 18px; border-radius: 12px; border-left: 3px solid #38bdf8;">
-✨ <b style="color:#93c5fd;">AI 推薦原因</b>：<span style="color:#e2e8f0;">{generate_recommendation_reason(top_flight, preference, 1)}</span>
+✨ <b style="color:#93c5fd;">AI 推薦原因</b>：<span style="color:#1e293b;">{generate_recommendation_reason(top_flight, preference, 1)}</span>
 </div>
 {compare_links}
 </div>
@@ -1226,7 +1233,7 @@ ai_info_html = f"""
     </div>
     <div class="ai-info-section algo">
         <b style="color:#60a5fa; font-size:1.05rem;">📌 計算機票排名的依據為何？</b><br>
-        <span style="color:#94a3b8; line-height:1.8;">本系統採用 <b>K-Nearest Neighbors (KNN) 機器學習演算法</b>。系統將所有航班的「票價、飛行時間、轉機次數」特徵經 MinMaxScaler 標準化後，映射至多維度特徵空間。接著根據您設定的「AI 推薦優先順序」（目前策略：<b style="color:#38bdf8;">{preference}</b>）賦予不同特徵權重，計算各航班與「完美理想航班（最低價、最短時、零轉機）」的歐氏距離。<b>距離越短 = AI 評分越高</b>。</span>
+        <span style="color:#475569; line-height:1.8;">本系統採用 <b>K-Nearest Neighbors (KNN) 機器學習演算法</b>。系統將所有航班的「票價、飛行時間、轉機次數」特徵經 MinMaxScaler 標準化後，映射至多維度特徵空間。接著根據您設定的「AI 推薦優先順序」（目前策略：<b style="color:#38bdf8;">{preference}</b>）賦予不同特徵權重，計算各航班與「完美理想航班（最低價、最短時、零轉機）」的歐氏距離。<b>距離越短 = AI 評分越高</b>。</span>
     </div>
     <div class="ai-info-section price">
         <b style="color:#065f46; font-size:1.05rem;">💰 價格是哪裡的價格資訊？如何進行比價？</b><br>
@@ -1287,16 +1294,16 @@ with tab1:
                 gf_url_cand = f"https://www.google.com/travel/flights?q=Flights%20to%20{destination_code}%20from%20{origin_code}%20on%20{f_date}"
                 
                 price_html = f"""
-<div style="font-size: 1.15rem; line-height: 1.9; color: #cbd5e1; margin-bottom: 20px;">
-    <span style="font-weight:800; color:#f8fafc;">🛫 {origin_display} ➔ 🛬 {dest_display}</span><br>
-    🕒 <span style="font-weight:700; color:#e2e8f0;">{fmt_time(row['departure_time'])}</span> 起飛 ➔ <span style="font-weight:700; color:#e2e8f0;">{fmt_time(row['arrival_time'])}</span> 抵達 ({cand_h}小時 {cand_m}分鐘)<br>
-    📅 航班日期：<span style="font-weight:700; color:#e2e8f0;">{f_date}</span><br>
-    🔄 轉機資訊：<span style="background:rgba(255,255,255,0.12); padding:2px 8px; border-radius:4px; font-size:1rem; color:#f8fafc;">{cand_stops}</span>{'<a href="' + cand_gf_url + '" target="_blank" style="margin-left:6px; font-size:0.82rem; color:#93c5fd;">查看轉機詳情 ↗</a>' if row['stops'] > 0 else ''}<br>
-    ✈️ 航空別：<span style="background:rgba(255,255,255,0.12); padding:2px 8px; border-radius:4px; font-size:0.9rem; font-weight:600; color:{'#2dd4bf' if row.get('airline_type','') == '全服務航空 (FSC)' else '#fbbf24' if row.get('airline_type','') == '廉航 (LCC)' else '#94a3b8'};">{row.get('airline_type', '未知')}</span><br>
+<div style="font-size: 1.15rem; line-height: 1.9; color:#334155; margin-bottom: 20px;">
+    <span style="font-weight:800; color:#0f172a;">🛫 {origin_display} ➔ 🛬 {dest_display}</span><br>
+    🕒 <span style="font-weight:700; color:#1e293b;">{fmt_time(row['departure_time'])}</span> 起飛 ➔ <span style="font-weight:700; color:#1e293b;">{fmt_time(row['arrival_time'])}</span> 抵達 ({cand_h}小時 {cand_m}分鐘)<br>
+    📅 航班日期：<span style="font-weight:700; color:#1e293b;">{f_date}</span><br>
+    🔄 轉機資訊：<span style="background:rgba(0,0,0,0.08); padding:2px 8px; border-radius:4px; font-size:1rem; color:#0f172a;">{cand_stops}</span>{'<a href="' + cand_gf_url + '" target="_blank" style="margin-left:6px; font-size:0.82rem; color:#93c5fd;">查看轉機詳情 ↗</a>' if row['stops'] > 0 else ''}<br>
+    ✈️ 航空別：<span style="background:rgba(0,0,0,0.08); padding:2px 8px; border-radius:4px; font-size:0.9rem; font-weight:600; color:{'#2dd4bf' if row.get('airline_type','') == '全服務航空 (FSC)' else '#fbbf24' if row.get('airline_type','') == '廉航 (LCC)' else '#94a3b8'};">{row.get('airline_type', '未知')}</span><br>
 </div>
-<div style="margin-top: 15px; padding: 15px; border-radius: 12px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.08);">
-<div style="font-size: 0.95rem; color: #94a3b8; margin-bottom: 5px;">💰 <b>基本單價</b>：{currency} {row.get('base_price', row['price']):,.0f} &nbsp;|&nbsp; 🛍️ <b>加購服務</b>：{currency} {row.get('addon_unit_cost', 0):,.0f} &nbsp;|&nbsp; 👥 <b>人數</b>：{int(adults_c)}</div>
-<div style="font-size: 1.1rem; color: #e2e8f0;">💳 <b>總計票價 (含加購)</b>：<b style="color: #f97316; font-size: 1.3rem;">{currency} {total_p:,.0f}</b></div>
+<div style="margin-top: 15px; padding: 15px; border-radius: 12px; background: rgba(255,255,255,0.6); border: 1px solid rgba(0,0,0,0.06);">
+<div style="font-size: 0.95rem; color:#475569; margin-bottom: 5px;">💰 <b>基本單價</b>：{currency} {row.get('base_price', row['price']):,.0f} &nbsp;|&nbsp; 🛍️ <b>加購服務</b>：{currency} {row.get('addon_unit_cost', 0):,.0f} &nbsp;|&nbsp; 👥 <b>人數</b>：{int(adults_c)}</div>
+<div style="font-size: 1.1rem; color:#1e293b;">💳 <b>總計票價 (含加購)</b>：<b style="color: #f97316; font-size: 1.3rem;">{currency} {total_p:,.0f}</b></div>
 <a href="{gf_url_cand}" target="_blank" style="text-decoration: none; display: inline-block; margin-top: 12px; width: 100%;">
 <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 8px 15px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; text-align: center; transition: all 0.2s;">
 ✈️ 前往 Google Flights 查看與訂票

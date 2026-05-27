@@ -100,6 +100,7 @@ FSC_AIRLINES = {
     # 東南亞
     "Singapore Airlines",       # 新加坡航空 (SQ)
     "Thai Airways",             # 泰國國際航空 (TG)
+    "THAI",                     # 泰國國際航空 (簡稱)
     "Malaysia Airlines",        # 馬來西亞航空 (MH)
     "Garuda Indonesia",         # 印尼鷹航 (GA)
     "Vietnam Airlines",         # 越南航空 (VN)
@@ -136,6 +137,12 @@ FSC_AIRLINES = {
     "Qantas",                   # 澳洲航空 (QF)
     "Air New Zealand",          # 紐西蘭航空 (NZ)
     "Fiji Airways",
+    
+    # 其它常見全服務
+    "SWISS",                    # 瑞士國際航空
+    "LOT",                      # 波蘭航空
+    "EgyptAir",                 # 埃及航空
+    "Brussels Airlines",        # 布魯塞爾航空
 }
 
 
@@ -148,18 +155,21 @@ def classify_airline(airline_name: str) -> str:
         return "未知"
     primary = airline_name.split(",")[0].strip()
 
-    # 精確匹配
-    if primary in LCC_AIRLINES:
-        return "廉航 (LCC)"
-    if primary in FSC_AIRLINES:
-        return "全服務航空 (FSC)"
-
-    # 模糊匹配（部分名稱）
+    # 先進行不分大小寫的精確匹配
     for name in LCC_AIRLINES:
-        if name.lower() in primary.lower() or primary.lower() in name.lower():
+        if name.lower() == primary.lower():
             return "廉航 (LCC)"
     for name in FSC_AIRLINES:
-        if name.lower() in primary.lower() or primary.lower() in name.lower():
+        if name.lower() == primary.lower():
+            return "全服務航空 (FSC)"
+
+    # 再進行模糊匹配（只檢查預設的完整名稱是否包含於爬取的資料字串中）
+    # 例如：預設為 "AirAsia"，爬取到 "AirAsia Zest"，則判定為 LCC
+    for name in LCC_AIRLINES:
+        if name.lower() in primary.lower():
+            return "廉航 (LCC)"
+    for name in FSC_AIRLINES:
+        if name.lower() in primary.lower():
             return "全服務航空 (FSC)"
 
     return "未知"
